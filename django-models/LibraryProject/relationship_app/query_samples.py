@@ -1,9 +1,7 @@
 import os
 import django
 
-# Set the DJANGO_SETTINGS_MODULE environment variable
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LibraryProject.settings") 
-
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LibraryProject.settings")
 django.setup()
 
 from relationship_app.models import Author, Book, Library, Librarian
@@ -32,3 +30,11 @@ for book in library_books:
 # Retrieve the librarian for a library
 library_librarian = Librarian.objects.get(library=library1)
 print(f"\nLibrarian for Central Library: {library_librarian.name}")
+
+# Retrieve a Library by name
+library_name = "Central Library"
+try:
+    library_by_name = Library.objects.get(name=library_name)
+    print(f"\nLibrary found by name '{library_name}': {library_by_name}")
+except Library.DoesNotExist:
+    print(f"\nLibrary with name '{library_name}' not found.")
