@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Book
 from .models import Library
 from django.views.generic.detail import DetailView
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from .models import UserProfile
 from django.contrib.auth.decorators import permission_required
 from .models import Book, Author
@@ -30,14 +30,18 @@ def is_member(user):
     except UserProfile.DoesNotExist:
         return False
     
+@login_required
 @user_passes_test(is_admin)
 def admin_view(request):
     return render(request, 'relationship_app/admin_view.html')
 
+@login_required
 @user_passes_test(is_librarian)
 def librarian_view(request):
     return render(request, 'relationship_app/librarian_view.html')
 
+
+@login_required
 @user_passes_test(is_member)
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
