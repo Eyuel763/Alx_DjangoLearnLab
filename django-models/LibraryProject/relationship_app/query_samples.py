@@ -7,16 +7,16 @@ django.setup()
 from relationship_app.models import Author, Book, Library, Librarian
 
 # Sample Data Creation (for demonstration)
-author1 = Author.objects.create(name="Jane Doe")
-book1 = Book.objects.create(title="Python Basics", author=author1)
-book2 = Book.objects.create(title="Django Unleashed", author=author1)
+author = Author.objects.create(name="Jane Doe")
+book1 = Book.objects.create(title="Python Basics", author=author)
+book2 = Book.objects.create(title="Django Unleashed", author=author)
 library1 = Library.objects.create(name="Central Library")
 library1.books.add(book1, book2)
 librarian1 = Librarian.objects.create(name="John Smith", library=library1)
 
 # Queries
 # Query all books by a specific author
-author_books = Book.objects.filter(author=author1)
+author_books = Book.objects.filter(author=author)
 print("Books by Jane Doe:")
 for book in author_books:
     print(book.title)
@@ -49,8 +49,8 @@ except Author.DoesNotExist:
 
 # Filter books by author object.
 try:
-    books_by_author_object = Book.objects.filter(author=author1)
-    print(f"\nBooks filtered by author object '{author1.name}':")
+    books_by_author_object = Book.objects.filter(author=author)
+    print(f"\nBooks filtered by author object '{author.name}':")
     for book in books_by_author_object:
         print(book.title)
 except Author.DoesNotExist:
