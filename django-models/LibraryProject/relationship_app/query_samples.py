@@ -38,3 +38,20 @@ try:
     print(f"\nLibrary found by name '{library_name}': {library_by_name}")
 except Library.DoesNotExist:
     print(f"\nLibrary with name '{library_name}' not found.")
+
+# Retrieve an Author by name
+author_name = "Jane Doe"
+try:
+    author_by_name = Author.objects.get(name=author_name)
+    print(f"\nAuthor found by name '{author_name}': {author_by_name}")
+except Author.DoesNotExist:
+    print(f"\nAuthor with name '{author_name}' not found.")
+
+# Filter books by author object.
+try:
+    books_by_author_object = Book.objects.filter(author=author1)
+    print(f"\nBooks filtered by author object '{author1.name}':")
+    for book in books_by_author_object:
+        print(book.title)
+except Author.DoesNotExist:
+    print(f"Author Object does not exist.")
