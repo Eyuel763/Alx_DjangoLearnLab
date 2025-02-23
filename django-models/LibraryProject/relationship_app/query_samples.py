@@ -1,7 +1,12 @@
 import os
 import django
+import sys
+
+project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(project_dir)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LibraryProject.settings")
+print("DJANGO_SETTINGS_MODULE:", os.environ.get("DJANGO_SETTINGS_MODULE"))
 django.setup()
 
 from relationship_app.models import Author, Book, Library, Librarian
