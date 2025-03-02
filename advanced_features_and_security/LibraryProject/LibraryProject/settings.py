@@ -173,6 +173,10 @@ AUTH_USER_MODEL = 'bookshelf.CustomUser'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Support for running behind a reverse proxy (e.g., Nginx, Heroku)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
 
 
 
