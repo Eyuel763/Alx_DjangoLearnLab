@@ -21,12 +21,55 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-porj$v^%tjvl97!5=mto+0jwv@1)a*q+0g$@z)82x_v!((+ll9'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-default-secret-key')
+
+# Security headers
+SECURE_BROWSER_XSS_FILTER = True  # Protects against XSS
+X_FRAME_OPTIONS = 'DENY'  # Prevents clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME sniffing attacks
+
+# CSRF and Session Security
+CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensures session cookies are sent over HTTPS
+CSRF_COOKIE_HTTPONLY = True  # Prevents JavaScript from accessing the CSRF token
+SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript from accessing session cookies
+
+# Enable HTTPS redirect
+SECURE_SSL_REDIRECT = True
+
+# HSTS (HTTP Strict Transport Security) - Enforce HTTPS
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Content Security Policy (CSP) (Optional - can be implemented in middleware)
+CSP_DEFAULT_SRC = ("'self'",)  # Restrict sources for content
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")  # Allow scripts from the same origin
+
+# Logging security warnings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'security_warnings.log'),
+        },
+    },
+    'loggers': {
+        'django.security': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
 
 
 # Application definition
