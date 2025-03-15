@@ -1,63 +1,92 @@
-# Advanced API Project
+# Advanced API Project - Testing Documentation
 
 ## Overview
-This project is an advanced Django REST Framework API setup that handles CRUD operations for `Book` models using generic views and custom serializers. It also includes advanced query capabilities such as filtering, searching, and ordering.
+This document provides an overview of the testing strategy and individual test cases for the `advanced_api_project`. The tests ensure the integrity of the API endpoints and the correctness of response data and status codes.
 
-## Views Configuration
+## Testing Strategy
+The testing strategy focuses on the following key areas:
+- CRUD operations for the Book model endpoints.
+- Filtering, searching, and ordering functionalities.
+- Permissions and authentication mechanisms.
 
-### BookListView
+## Test Cases
+
+### Setup
+The `setUp` method initializes the test client, creates a test user, author, and book, and logs in the test user.
+
+### Test Create Book
+- **URL:** `/api/books/create/`
+- **Method:** `POST`
+- **Description:** Creates a new book and verifies that the book is correctly saved and returned.
+- **Assertions:**
+  - Status code is `201 Created`.
+  - Book count increases by 1.
+  - The created book's title matches the provided data.
+
+### Test Get Book List
 - **URL:** `/api/books/`
-- **Methods:** `GET`, `POST`
-- **Description:** Retrieves all books and allows creation of new books. Supports filtering, searching, and ordering.
-- **Permission:** `IsAuthenticatedOrReadOnly`
-- **Filtering:** Supports filtering by `title`, `author__name`, and `publication_year`.
-- **Searching:** Supports searching by `title` and `author__name`.
-- **Ordering:** Supports ordering by `title` and `publication_year`.
+- **Method:** `GET`
+- **Description:** Retrieves the list of books and verifies the response data.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The length of the response data matches the number of books in the database.
+  - The retrieved book's title matches the expected data.
 
-## Filtering, Searching, and Ordering
+### Test Get Book Detail
+- **URL:** `/api/books/<id>/`
+- **Method:** `GET`
+- **Description:** Retrieves the details of a single book by ID and verifies the response data.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The retrieved book's title matches the expected data.
 
-### Filtering
-To filter the books, use query parameters in the URL. For example:
-- Filter by title:
-  ```
-  /api/books/?title=SomeBookTitle
-  ```
-- Filter by author name:
-  ```
-  /api/books/?author__name=AuthorName
-  ```
-- Filter by publication year:
-  ```
-  /api/books/?publication_year=2025
-  ```
+### Test Update Book
+- **URL:** `/api/books/<id>/update/`
+- **Method:** `PUT`
+- **Description:** Updates an existing book and verifies that the changes are reflected.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The updated book's title matches the provided data.
 
-### Searching
-To search for books by title or author name, use the `search` query parameter. For example:
-```
-/api/books/?search=SomeSearchTerm
-```
+### Test Delete Book
+- **URL:** `/api/books/<id>/delete/`
+- **Method:** `DELETE`
+- **Description:** Deletes a book and verifies that it is removed from the database.
+- **Assertions:**
+  - Status code is `204 No Content`.
+  - Book count decreases by 1.
 
-### Ordering
-To order the books, use the `ordering` query parameter. For example:
-- Order by title:
-  ```
-  /api/books/?ordering=title
-  ```
-- Order by publication year:
-  ```
-  /api/books/?ordering=publication_year
-  ```
+### Test Filter Books by Title
+- **URL:** `/api/books/?title=<title>`
+- **Method:** `GET`
+- **Description:** Filters the list of books by title and verifies the response data.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The length of the response data matches the number of books with the specified title.
+  - The retrieved book's title matches the expected data.
 
-## Testing
-To test the API endpoints, you can use tools like Postman or curl. Ensure to test the following:
-- Filtering, searching, and ordering of `Book` instances.
+### Test Search Books
+- **URL:** `/api/books/?search=<search_term>`
+- **Method:** `GET`
+- **Description:** Searches for books by title or author name and verifies the response data.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The length of the response data matches the number of books that match the search term.
+  - The retrieved book's title matches the expected data.
+
+### Test Order Books by Publication Year
+- **URL:** `/api/books/?ordering=publication_year`
+- **Method:** `GET`
+- **Description:** Orders the list of books by publication year and verifies the response data.
+- **Assertions:**
+  - Status code is `200 OK`.
+  - The books are ordered by publication year in ascending order.
+
+## Running Tests
+To run the tests, use the following command:
 
 ```sh
-# Example curl commands
-curl -X GET "http://127.0.0.1:8000/api/books/?title=SomeBookTitle"
-curl -X GET "http://127.0.0.1:8000/api/books/?author__name=AuthorName"
-curl -X GET "http://127.0.0.1:8000/api/books/?publication_year=2025"
-curl -X GET "http://127.0.0.1:8000/api/books/?search=SomeSearchTerm"
-curl -X GET "http://127.0.0.1:8000/api/books/?ordering=title"
-curl -X GET "http://127.0.0.1:8000/api/books/?ordering=publication_year"
+python manage.py test api
 ```
+
+Review the outputs and fix any issues or bugs identified by the tests.
