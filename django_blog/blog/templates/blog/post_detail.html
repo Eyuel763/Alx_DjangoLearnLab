@@ -6,4 +6,23 @@
 {% if user == post.author %}
     <p><a href="{% url 'post-update' post.pk %}">Edit</a> | <a href="{% url 'post-delete' post.pk %}">Delete</a></p>
 {% endif %}
+
+<h3>Comments</h3>
+{% for comment in post.comments.all %}
+    <div>
+        <p>{{ comment.content }}</p>
+        <small>By: {{ comment.author.username }} - {{ comment.created_at }}</small>
+        {% if user == comment.author %}
+            <p><a href="{% url 'comment-update' comment.pk %}">Edit</a> | <a href="{% url 'comment-delete' comment.pk %}">Delete</a></p>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+    <a href="{% url 'add-comment' post.pk %}">Add Comment</a>
+{% else %}
+    <p><a href="{% url 'login' %}">Login</a> to add a comment.</p>
+{% endif %}
 {% endblock %}
