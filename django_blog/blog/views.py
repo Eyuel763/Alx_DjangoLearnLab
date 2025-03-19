@@ -136,20 +136,36 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
     
-def post_by_tag(request, tag_slug):
-    tag = get_object_or_404(Tag, slug=tag_slug)
-    posts = Post.objects.filter(tags=tag)
-    return render(request, 'blog/post_list.html', {'posts': posts, 'tag': tag})
+class PostByTagView(ListView):
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
 
-def search_posts(request):
-    query = request.GET.get('q')
-    if query:
-        posts = Post.objects.filter(
-            Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
-        ).distinct()
-    else:
-        posts = Post.objects.all()
-    return render(request, 'blog/post_list.html', {'posts': posts, 'query': query})
+    def get_queryset(self):
+        self.tag = get_object_or_404(Tag, slug=self.kwargs['tag_slug'])
+        return Post.objects.filter(tags=self.tag)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.tag
+        return context
+
+class SearchPostsView(ListView):
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+            ).distinct()
+        else:
+            return Post.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
 
 
 
