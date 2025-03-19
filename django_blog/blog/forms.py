@@ -12,7 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
         fields = UserCreationForm.Meta.fields + ('email',)
 
 class PostForm(forms.ModelForm):
-    tags = TagField(widget=TagWidget(), required=False)
+    tags = TagField(widgets=TagWidget(), required=False)
 
     class Meta:
         model = Post
