@@ -26,7 +26,7 @@ class UserLoginView(APIView):
                 return Response({'token': token.key}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-cclass FollowUserView(APIView):
+class FollowUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
