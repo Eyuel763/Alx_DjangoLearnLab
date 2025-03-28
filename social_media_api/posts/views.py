@@ -1,10 +1,12 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions, filters, generics
-from .models import Post, Comment
+from rest_framework import viewsets, permissions, filters, generics, status
+from rest_framework.response import Response
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
+from notification.models import Notification
 
 User = get_user_model()
 
@@ -41,3 +43,26 @@ class FeedView(generics.ListAPIView):
     def get_queryset(self):
         following_users = self.request.user.following.all()
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
+    
+class LikePostView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        like, created = Like.objects.get_or_create(post=post, user=request.user)
+        if created:
+            Notification.objects.create(recipient=post.author, actor=request.user, verb='liked your post', target=post)
+            return Response({'message': 'Post liked'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Post already liked'}, status=status.HTTP_200_OK)
+
+class UnlikePostView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        try:
+            like = Like.objects.get(post=post, user=request.user)
+            like.delete()
+            return Response({'message': 'Post unliked'}, status=status.HTTP_204_NO_CONTENT)
+        except Like.DoesNotExist:
+            return Response({'message': 'Post not liked'}, status=status.HTTP_400_BAD_REQUEST)
