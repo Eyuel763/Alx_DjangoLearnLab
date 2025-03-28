@@ -154,3 +154,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DATABASES = {
     'default': dj_database_url.config(default='sqlite:///db.sqlite3')
 }
+
+PORT = os.environ.get('PORT', '8000')
