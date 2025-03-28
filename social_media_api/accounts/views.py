@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import status,permissions
+from rest_framework import status,permissions, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, LoginSerializer
@@ -26,7 +26,7 @@ class UserLoginView(APIView):
                 return Response({'token': token.key}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class FollowUserView(APIView):
+cclass FollowUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
@@ -46,3 +46,7 @@ class UnfollowUserView(APIView):
         request.user.following.remove(user_to_unfollow)
         return Response({'message': f'You are no longer following {user_to_unfollow.username}.'}, status=status.HTTP_200_OK)
 
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
