@@ -12,11 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         def create(self, validate_data):
             password = validate_data.pop('password', None)
-            instance = self.Meta.model(**validate_data)
+            user = User.objects.create_user(**validate_data)
             if password is not None:
-                instance.set_password(password)
-            instance.save
-            return instance
+                user.set_password(password)
+            user.save()
+            token = Token.objects.create(user=user)
+            return user, token
         
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
