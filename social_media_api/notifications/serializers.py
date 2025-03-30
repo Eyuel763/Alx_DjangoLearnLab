@@ -1,4 +1,3 @@
-# social_media_api/notifications/serializers.py
 from rest_framework import serializers
 from .models import Notification
 
