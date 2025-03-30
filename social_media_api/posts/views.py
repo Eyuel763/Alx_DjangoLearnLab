@@ -53,7 +53,7 @@ class LikePostView(generics.CreateAPIView):
     def create(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=self.kwargs['pk'])
         post = generics.get_object_or_404(Post, pk=pk)
-        like, created = Like.objects.get_or_create(user=request.user,post=post)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         if created:
             Notification.objects.create(recipient=post.author, actor=request.user, verb='liked your post', target=post)
             return Response({'message': 'Post liked'}, status=status.HTTP_201_CREATED)
