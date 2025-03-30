@@ -6,7 +6,10 @@ from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth import get_user_model
-from notification.models import Notification
+from notifications.models import Notification
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -47,9 +50,10 @@ class FeedView(generics.ListAPIView):
 class LikePostView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=self.kwargs['pk'])
-        like, created = Like.objects.get_or_create(post=post, user=request.user)
+        post = generics.get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user,post=post)
         if created:
             Notification.objects.create(recipient=post.author, actor=request.user, verb='liked your post', target=post)
             return Response({'message': 'Post liked'}, status=status.HTTP_201_CREATED)
