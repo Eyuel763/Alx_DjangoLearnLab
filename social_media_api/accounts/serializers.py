@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         def create(self, validate_data):
             password = validate_data.pop('password', None)
-            user = get_user_model().objects.create_user(**validate_data)
+            user = user.objects.create_user(**validate_data)
             if password is not None:
                 user.set_password(password)
             user.save()
